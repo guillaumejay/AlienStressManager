@@ -512,3 +512,37 @@ Expected: No TypeScript errors
 ## Next Work Package
 
 After completing WP01, proceed to **WP02: Core Composables** to implement reusable business logic for localStorage persistence, character state management, action logging, and i18n wrapper.
+
+---
+
+## Activity Log
+
+**2025-11-19 - Started Implementation**
+- Agent: claude
+- Action: Started WP01 implementation
+- Notes: Began directory structure setup, Tailwind 4 theme configuration, and i18n integration
+
+**2025-11-19 - Tasks T001-T008 Completed**
+- Agent: claude
+- Action: Completed all subtasks
+- Deliverables:
+  - Directory structure created (src/components/, src/composables/, src/i18n/, src/types/, tests/)
+  - Tailwind 4 SF/Alien theme with CSS custom properties (@theme directive)
+  - TypeScript types defined (Character, ActionLogEntry, Locale, ActionType)
+  - i18n configuration with browser locale detection
+  - English and French translations complete
+  - main.ts integrated with i18n plugin
+  - App.vue themed with SF/Alien colors
+
+**2025-11-19 - Validation Complete**
+- Agent: claude
+- Action: Validated implementation
+- Results:
+  - `npm run type-check`: PASS (0 errors)
+  - `npm run dev`: PASS (server started successfully)
+  - Manual inspection: Dark SF/Alien theme applied, translated title displays correctly
+
+**2025-11-19 - Work Package Complete**
+- Agent: claude
+- Status: done
+- All acceptance criteria met, ready for WP02
