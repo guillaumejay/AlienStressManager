@@ -1,0 +1,29 @@
+{
+  "app": {
+    "title": "Suivi du Stress",
+    "characterName": "Nom du Personnage",
+    "characterNamePlaceholder": "Entrez le nom du personnage",
+    "stress": "Stress",
+    "actions": {
+      "increment": "Augmenter",
+      "decrement": "Diminuer",
+      "reset": "Réinitialiser"
+    },
+    "actionLog": {
+      "title": "Historique des Actions",
+      "toggle": "Basculer l'Historique",
+      "empty": "Aucune action enregistrée",
+      "incrementLabel": "+1",
+      "decrementLabel": "-1",
+      "resetLabel": "Réinitialisation à 0"
+    },
+    "language": {
+      "label": "Langue",
+      "en": "Anglais",
+      "fr": "Français"
+    },
+    "errors": {
+      "storageUnavailable": "Avertissement : Les données ne seront pas sauvegardées. Activez localStorage ou utilisez le mode de navigation normal."
+    }
+  }
+}

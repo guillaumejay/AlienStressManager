@@ -1,0 +1,14 @@
+Entry ID,Timestamp,Research Topic,Finding,Source ID,Confidence,Notes
+1,2025-11-19T10:00:00Z,Tailwind 4 Dark Theme,@theme directive for CSS custom properties recommended in Tailwind 4,SRC-001,High,Official migration guide confirms CSS-first approach
+2,2025-11-19T10:15:00Z,Tailwind 4 Dark Theme,Arbitrary values syntax: bg-[var(--custom-color)],SRC-001,High,Supports CSS variables in utility classes
+3,2025-11-19T10:30:00Z,vue-i18n Best Practices,Composition API mode (legacy: false) recommended for Vue 3,SRC-002,High,Official vue-i18n v11 docs specify Composition API
+4,2025-11-19T10:45:00Z,vue-i18n Best Practices,TypeScript message schema via @intlify/unplugin-vue-i18n/messages,SRC-002,Medium,Enables type-safe translation keys
+5,2025-11-19T11:00:00Z,vue-i18n Best Practices,navigator.language for locale detection with fallback,SRC-003,High,MDN standard API across modern browsers
+6,2025-11-19T11:15:00Z,localStorage Best Practices,watchEffect triggers on reactive dependency changes,SRC-004,High,Vue 3 Composition API core feature
+7,2025-11-19T11:30:00Z,localStorage Best Practices,QuotaExceededError handling via try/catch,SRC-005,High,Web Storage API spec documents error types
+8,2025-11-19T11:45:00Z,localStorage Best Practices,StorageEvent fires when localStorage modified in another tab,SRC-005,High,Same-origin cross-tab sync mechanism
+9,2025-11-19T12:00:00Z,localStorage Best Practices,5MB typical localStorage quota minimum,SRC-005,Medium,Varies by browser but 5MB+ generally safe
+10,2025-11-19T12:15:00Z,Component Testing,Vitest built for Vite projects with fast HMR,SRC-006,High,Official Vite testing framework
+11,2025-11-19T12:30:00Z,Component Testing,@vue/test-utils v2 supports Composition API,SRC-007,High,Official Vue testing library for Vue 3
+12,2025-11-19T12:45:00Z,Component Testing,Composable tests run without DOM overhead,SRC-007,High,Plain function tests faster than component mounts
+13,2025-11-19T13:00:00Z,Component Testing,Mock localStorage via beforeEach/afterEach setup,SRC-006,High,Standard Vitest pattern for test isolation

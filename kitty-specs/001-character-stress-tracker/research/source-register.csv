@@ -1,0 +1,9 @@
+Source ID,Title,Type,URL,Access Date,Author/Publisher,Reliability,Notes
+SRC-001,Tailwind CSS v4 Documentation,Official Docs,https://tailwindcss.com/docs/v4-beta,2025-11-19,Tailwind Labs,High,Official migration guide and @theme directive docs
+SRC-002,vue-i18n v11 TypeScript Guide,Official Docs,https://vue-i18n.intlify.dev/guide/advanced/typescript.html,2025-11-19,intlify,High,TypeScript integration patterns and message schema
+SRC-003,Navigator.language - Web APIs,MDN Reference,https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language,2025-11-19,Mozilla,High,Browser locale detection API documentation
+SRC-004,Vue 3 Composition API Reference,Official Docs,https://vuejs.org/api/reactivity-core.html,2025-11-19,Vue.js Team,High,watchEffect and reactive state documentation
+SRC-005,Web Storage API,MDN Reference,https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API,2025-11-19,Mozilla,High,localStorage API QuotaExceededError and StorageEvent
+SRC-006,Vitest Documentation,Official Docs,https://vitest.dev/,2025-11-19,Vitest Team,High,Testing framework setup and mocking patterns
+SRC-007,Vue Test Utils Documentation,Official Docs,https://test-utils.vuejs.org/,2025-11-19,Vue.js Team,High,Component testing library for Vue 3
+SRC-008,Alien RPG Core Rulebook,Game Manual,Free League Publishing,2025-11-19,Free League Publishing,High,Stress mechanics and terminology reference

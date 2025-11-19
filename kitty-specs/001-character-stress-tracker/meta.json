@@ -1,0 +1,7 @@
+{
+  "feature_number": "001",
+  "slug": "001-character-stress-tracker",
+  "friendly_name": "Character Stress Tracker",
+  "source_description": "This application handle stress point management for a character. At start, the user must enter the name of the character. Then a stress counter is displayed, with +, - , and reset buttons avaibles (as icons) . The UI should be SF oriented / Alien oriented. You should keep a log of button action, (timestamp hh:mm and action),but this should be unobtrusive, it's just there for checking",
+  "created_at": "2025-11-19T18:01:14Z"
+}

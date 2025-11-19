@@ -1,0 +1,29 @@
+{
+  "app": {
+    "title": "Stress Tracker",
+    "characterName": "Character Name",
+    "characterNamePlaceholder": "Enter character name",
+    "stress": "Stress",
+    "actions": {
+      "increment": "Increase",
+      "decrement": "Decrease",
+      "reset": "Reset"
+    },
+    "actionLog": {
+      "title": "Action History",
+      "toggle": "Toggle History",
+      "empty": "No actions recorded yet",
+      "incrementLabel": "+1",
+      "decrementLabel": "-1",
+      "resetLabel": "Reset to 0"
+    },
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "fr": "French"
+    },
+    "errors": {
+      "storageUnavailable": "Warning: Data will not be saved. Enable localStorage or use regular browsing mode."
+    }
+  }
+}
