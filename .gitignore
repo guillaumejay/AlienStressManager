@@ -36,7 +36,7 @@ coverage
 __screenshots__/
 
 # Added by Spec Kitty CLI (auto-managed)
-.claude/
+# .claude/
 .codex/
 .opencode/
 .windsurf/
