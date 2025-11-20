@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import StressTracker from './components/StressTracker.vue'
 import LanguageSelector from './components/LanguageSelector.vue'
+import Footer from './components/Footer.vue'
 
 const { t } = useI18n()
 </script>
@@ -25,5 +26,8 @@ const { t } = useI18n()
     <main class="max-w-4xl mx-auto">
       <StressTracker />
     </main>
+
+    <!-- Footer -->
+    <Footer />
   </div>
 </template>

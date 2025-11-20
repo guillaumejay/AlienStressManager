@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useCharacterState } from '@/composables/useCharacterState'
 import { useActionLog } from '@/composables/useActionLog'
 import { useI18n } from '@/composables/useI18n'
@@ -7,28 +7,18 @@ import ActionLog from './ActionLog.vue'
 
 const { t } = useI18n()
 const { character, updateName, incrementStress, decrementStress, resetStress } = useCharacterState()
-const { entries, logAction, clearLog } = useActionLog()
+const { entries, logAction } = useActionLog()
 
-const isNameEntered = ref(character.value.name !== '')
 const isLogVisible = ref(false)
 
 function toggleLog(): void {
   isLogVisible.value = !isLogVisible.value
 }
 
-function handleNameBlur(event: Event): void {
+function handleNameInput(event: Event): void {
   const input = event.target as HTMLInputElement
   const newName = input.value.trim()
-
-  if (newName && newName !== character.value.name) {
-    updateName(newName)
-    clearLog() // Clear log when character name changes
-    isNameEntered.value = true
-  } else if (!newName) {
-    isNameEntered.value = false
-  } else {
-    isNameEntered.value = true
-  }
+  updateName(newName)
 }
 
 function handleIncrement(): void {
@@ -45,14 +35,6 @@ function handleReset(): void {
   resetStress()
   logAction('reset', character.value.stress)
 }
-
-// Watch for character name to update isNameEntered
-watch(
-  () => character.value.name,
-  (newName) => {
-    isNameEntered.value = newName !== ''
-  },
-)
 </script>
 
 <template>
@@ -70,13 +52,13 @@ watch(
         type="text"
         :value="character.name"
         :placeholder="t('app.characterNamePlaceholder')"
-        @blur="handleNameBlur"
+        @input="handleNameInput"
         class="w-full px-4 py-3 bg-[var(--color-alien-bg-secondary)] text-[var(--color-alien-text)] border border-[var(--color-alien-border)] rounded focus:outline-none focus:border-[var(--color-alien-accent)] transition-colors text-lg"
       />
     </div>
 
-    <!-- Stress Tracker (only shown when name is entered) -->
-    <div v-if="isNameEntered" class="space-y-6">
+    <!-- Stress Tracker -->
+    <div class="space-y-6">
       <!-- Stress Counter Display -->
       <div class="text-center">
         <div class="text-sm text-[var(--color-alien-text-dim)] mb-2">

@@ -52,28 +52,12 @@ describe('StressTracker', () => {
     expect(input.attributes('placeholder')).toBe('Enter character name')
   })
 
-  it('should not show stress tracker when name is empty', () => {
+  it('should show stress tracker even when name is empty', () => {
     const wrapper = mount(StressTracker, {
       global: {
         plugins: [i18n]
       }
     })
-
-    const stressCounter = wrapper.find('.text-6xl')
-    expect(stressCounter.exists()).toBe(false)
-  })
-
-  it('should show stress tracker after entering name', async () => {
-    const wrapper = mount(StressTracker, {
-      global: {
-        plugins: [i18n]
-      }
-    })
-
-    const input = wrapper.find('input[type="text"]')
-    await input.setValue('Ellen Ripley')
-    await input.trigger('blur')
-    await nextTick()
 
     const stressCounter = wrapper.find('.text-6xl')
     expect(stressCounter.exists()).toBe(true)
@@ -158,26 +142,6 @@ describe('StressTracker', () => {
     )
 
     await resetButton?.trigger('click')
-    await nextTick()
-
-    const stressCounter = wrapper.find('.text-6xl')
-    expect(stressCounter.text()).toBe('0')
-  })
-
-  it('should reset stress when character name is changed', async () => {
-    localStorageMock['character'] = JSON.stringify({ name: 'Character 1', stress: 7 })
-
-    const wrapper = mount(StressTracker, {
-      global: {
-        plugins: [i18n]
-      }
-    })
-
-    await nextTick()
-
-    const input = wrapper.find('input[type="text"]')
-    await input.setValue('Character 2')
-    await input.trigger('blur')
     await nextTick()
 
     const stressCounter = wrapper.find('.text-6xl')
