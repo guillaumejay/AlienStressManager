@@ -161,12 +161,15 @@ function handleReset(): void {
           {{ panicResult.effect.name }} ({{ panicResult.roll }})
         </h3>
         <p class="text-[var(--color-alien-text)] mb-4">{{ panicResult.effect.description }}</p>
-        <div v-if="panicResult.effect.notes || panicResult.effect.actionLoss" class="mt-4 p-4 bg-red-900 bg-opacity-50 border border-red-700 rounded">
+        <div v-if="panicResult.effect.notes || panicResult.effect.actionLoss || panicResult.effect.otherStressChange" class="mt-4 p-4 bg-red-900 bg-opacity-50 border border-red-700 rounded">
           <p v-if="panicResult.effect.actionLoss === 'slow'" class="text-yellow-300">
             {{ t('app.panic.actionLossSlow') }}
           </p>
           <p v-else-if="panicResult.effect.actionLoss === 'all'" class="text-yellow-300">
             {{ t('app.panic.actionLossAll') }}
+          </p>
+          <p v-if="panicResult.effect.otherStressChange" class="text-yellow-300">
+            {{ t('app.panic.otherStressChange', { n: panicResult.effect.otherStressChange }) }}
           </p>
           <p v-if="panicResult.effect.notes" class="text-yellow-300">
             {{ panicResult.effect.notes }}

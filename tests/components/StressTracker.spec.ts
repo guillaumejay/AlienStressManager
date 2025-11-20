@@ -262,4 +262,24 @@ describe('StressTracker', () => {
       'Every friendly character who hears your scream must make an immediate Panic Roll.'
     )
   })
+
+  it('displays alert zone for other stress change', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0) // Die roll will be 1
+    localStorageMock['character'] = JSON.stringify({
+      name: 'Ripley',
+      stress: 6,
+      hasNerveOfSteel: false,
+    }) // Roll: 1 + 6 = 7
+
+    const wrapper = mount(StressTracker, { global: { plugins: [i18n] } })
+    await nextTick()
+
+    const panicButton = wrapper.find('button[aria-label="Panic Roll"]')
+    await panicButton.trigger('click')
+    await nextTick()
+    
+    const alertZone = wrapper.find('.bg-red-900')
+    expect(alertZone.exists()).toBe(true)
+    expect(alertZone.text()).toContain('Stress level of all friendly PCs in short range increases by 1.')
+  })
 })

@@ -29,6 +29,7 @@
       "actionLoss": "Vous perdez votre prochaine action.",
       "actionLossSlow": "Vous perdez votre prochaine action lente.",
       "actionLossAll": "Vous perdez toutes vos actions.",
+      "otherStressChange": "Le niveau de stress de tous les PJ amicaux à courte portée augmente de {n}.",
       "panicTable": {
         "1": {
           "name": "JE TIENS LE COUP",

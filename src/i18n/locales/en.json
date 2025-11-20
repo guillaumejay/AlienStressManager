@@ -29,6 +29,7 @@
       "actionLoss": "You lose your next action.",
       "actionLossSlow": "You lose your next slow action.",
       "actionLossAll": "You lose all your actions.",
+      "otherStressChange": "Stress level of all friendly PCs in short range increases by {n}.",
       "panicTable": {
         "1": {
           "name": "KEEPING IT TOGETHER",
