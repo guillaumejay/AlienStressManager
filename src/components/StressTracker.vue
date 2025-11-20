@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useCharacterState } from '@/composables/useCharacterState'
 import { useActionLog } from '@/composables/useActionLog'
 import { useI18n } from '@/composables/useI18n'
@@ -20,6 +20,22 @@ const { entries } = useActionLog()
 
 const isLogVisible = ref(false)
 const panicResult = ref<PanicRollResult | null>(null)
+const stressChangeClass = ref('')
+
+watch(
+  () => character.value.stress,
+  (newStress, oldStress) => {
+    if (newStress > oldStress) {
+      stressChangeClass.value = 'text-red-500'
+    } else if (newStress < oldStress) {
+      stressChangeClass.value = 'text-green-500'
+    }
+
+    setTimeout(() => {
+      stressChangeClass.value = ''
+    }, 2000)
+  }
+)
 
 function toggleLog(): void {
   isLogVisible.value = !isLogVisible.value
@@ -89,7 +105,10 @@ function handleReset(): void {
         <div class="text-sm text-[var(--color-alien-text-dim)] mb-2">
           {{ t('app.stress') }}
         </div>
-        <div class="text-6xl md:text-8xl font-bold text-[var(--color-alien-text-bright)] mb-8">
+        <div
+          class="text-6xl md:text-8xl font-bold text-[var(--color-alien-text-bright)] mb-8 transition-colors"
+          :class="stressChangeClass"
+        >
           {{ character.stress }}
         </div>
       </div>

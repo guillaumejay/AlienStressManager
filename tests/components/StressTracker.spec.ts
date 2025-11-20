@@ -282,4 +282,37 @@ describe('StressTracker', () => {
     expect(alertZone.exists()).toBe(true)
     expect(alertZone.text()).toContain('Stress level of all friendly PCs in short range increases by 1.')
   })
+
+  it('changes stress color on change', async () => {
+    vi.useFakeTimers()
+    localStorageMock['character'] = JSON.stringify({ name: 'Test', stress: 5, hasNerveOfSteel: false })
+    const wrapper = mount(StressTracker, { global: { plugins: [i18n] } })
+    await nextTick()
+
+    const stressCounter = wrapper.find('.text-6xl')
+
+    // Increment
+    const incrementButton = wrapper.find('button[aria-label="Increase"]')
+    await incrementButton.trigger('click')
+    await nextTick()
+    expect(stressCounter.classes()).toContain('text-red-500')
+
+    // Fast-forward time
+    vi.advanceTimersByTime(2000)
+    await nextTick()
+    expect(stressCounter.classes()).not.toContain('text-red-500')
+
+    // Decrement
+    const decrementButton = wrapper.find('button[aria-label="Decrease"]')
+    await decrementButton.trigger('click')
+    await nextTick()
+    expect(stressCounter.classes()).toContain('text-green-500')
+
+    // Fast-forward time
+    vi.advanceTimersByTime(2000)
+    await nextTick()
+    expect(stressCounter.classes()).not.toContain('text-green-500')
+
+    vi.useRealTimers()
+  })
 })
