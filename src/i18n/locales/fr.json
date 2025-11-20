@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Suivi du Stress",
+    "title": "Gestionnaire de Stress Alien",
     "characterName": "Nom du Personnage",
     "characterNamePlaceholder": "Entrez le nom du personnage",
     "stress": "Stress",
@@ -15,12 +15,100 @@
       "empty": "Aucune action enregistrée",
       "incrementLabel": "+1",
       "decrementLabel": "-1",
-      "resetLabel": "Réinitialisation à 0"
+      "resetLabel": "Réinitialisation à 0",
+      "panicLabel": "Panique !"
     },
     "language": {
       "label": "Langue",
       "en": "Anglais",
       "fr": "Français"
+    },
+    "panic": {
+      "nerveOfSteel": "Nerfs d'acier (-2 aux jets de panique)",
+      "roll": "Jet de Panique",
+      "actionLoss": "Vous perdez votre prochaine action.",
+      "actionLossSlow": "Vous perdez votre prochaine action lente.",
+      "actionLossAll": "Vous perdez toutes vos actions.",
+      "panicTable": {
+        "1": {
+          "name": "JE TIENS LE COUP",
+          "description": "Vous parvenez à maîtriser vos nerfs. Tout juste."
+        },
+        "2": {
+          "name": "JE TIENS LE COUP",
+          "description": "Vous parvenez à maîtriser vos nerfs. Tout juste."
+        },
+        "3": {
+          "name": "JE TIENS LE COUP",
+          "description": "Vous parvenez à maîtriser vos nerfs. Tout juste."
+        },
+        "4": {
+          "name": "JE TIENS LE COUP",
+          "description": "Vous parvenez à maîtriser vos nerfs. Tout juste."
+        },
+        "5": {
+          "name": "JE TIENS LE COUP",
+          "description": "Vous parvenez à maîtriser vos nerfs. Tout juste."
+        },
+        "6": {
+          "name": "JE TIENS LE COUP",
+          "description": "Vous parvenez à maîtriser vos nerfs. Tout juste."
+        },
+        "7": {
+          "name": "TRESSAILLEMENT NERVEUX",
+          "description": "Votre NIVEAU DE STRESS et celui de tous les PJ amicaux situés à COURTE portée de vous augmentent de 1.",
+          "stressChange": 1,
+          "otherStressChange": 1
+        },
+        "8": {
+          "name": "TREMBLEMENT",
+          "description": "Vous êtes pris d'incontrôlables tremblements. Tous les tests de compétence utilisant l'AGILITÉ subissent un modificateur de -2 jusqu'à ce que votre panique s'arrête."
+        },
+        "9": {
+          "name": "OBJET LÂCHÉ",
+          "description": "Le stress, l'affolement ou la soudaine prise de conscience (vous allez tous mourir de toute façon) vous fait lâcher une arme ou un autre objet important, choisi par l'humain. Votre NIVEAU DE STRESS augmente de 1.",
+          "stressChange": 1
+        },
+        "10": {
+          "name": "FIGÉ",
+          "description": "La peur ou le stress vous paralyse pendant un Round, et vous perdez votre action lente suivante. Votre NIVEAU DE STRESS et celui de tous les PJ amicaux situés à COURTE portée de vous augmente de 1.",
+          "stressChange": 1,
+          "otherStressChange": 1,
+          "actionLoss": "slow"
+        },
+        "11": {
+          "name": "TOUS AUX ABRIS!",
+          "description": "Vous devez utiliser votre prochaine action pour vous éloigner du danger et trouver un endroit sûr si possible. Vous avez le droit de faire un test de MOBILITÉ pour battre en retraite (cf. page 93) en cas d'ennemi au CONTACT. Votre NIVEAU DE STRESS baisse de 1, mais celui de tous les PJ amicaux situés à COURTE portée de vous augmente de 1. Au bout d'un Round, vous recommencez à agir normalement.",
+          "stressChange": -1,
+          "otherStressChange": 1,
+          "actionLoss": "all"
+        },
+        "12": {
+          "name": "HURLEMENT",
+          "description": "Vous hurlez à pleins poumons pendant un Round, et perdez votre action lente suivante. Votre NIVEAU DE STRESS baisse de 1, mais tout personnage amical qui vous entend hurler doit immédiatement effectuer un test de Panique.",
+          "stressChange": -1,
+          "actionLoss": "slow",
+          "notes": "Tout personnage amical qui vous entend hurler doit immédiatement effectuer un test de Panique."
+        },
+        "13": {
+          "name": "FUITE",
+          "description": "Vous n'en pouvez plus. Vous devez fuir un lieu sûr et une fois à l'abri, vous n'êtes bougez plus. Vous n'attaquez personne et ne tentez rien de dangereux. Vous n'avez pas le droit à un test de MOBILITÉ pour battre en retraite (cf. page 93) en cas d'ennemi au CONTACT lorsque vous fuyez. Votre NIVEAU DE STRESS baisse de 1, mais tout personnage amical qui vous voit vous enfuir doit immédiatement faire un test de Panique.",
+          "stressChange": -1,
+          "actionLoss": "all",
+          "notes": "Tout personnage amical qui vous voit vous enfuir doit immédiatement faire un test de Panique."
+        },
+        "14": {
+          "name": "PSYCHOSE",
+          "description": "Vous devez immédiatement attaquer la personne ou la créature la plus proche, amicale ou non. Vous ne vous arrêterez pas tant que vous ou votre cible la plus proche, amicale ou non, n'êtes pas Brisé. Tout personnage amical qui assiste à votre crise meurtrière doit immédiatement faire un test de Panique.",
+          "actionLoss": "all",
+          "notes": "Tout personnage amical qui assiste à votre crise meurtrière doit immédiatement faire un test de Panique."
+        },
+        "15": {
+          "name": "CATATONIE",
+          "description": "Vous vous écroulerez et vous ne pouvez plus ni bouger ni parler, les yeux perdus dans le vide.",
+          "actionLoss": "all"
+        }
+      }
     },
     "errors": {
       "storageUnavailable": "Avertissement : Les données ne seront pas sauvegardées. Activez localStorage ou utilisez le mode de navigation normal."

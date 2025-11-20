@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Stress Tracker",
+    "title": "Alien Stress Manager",
     "characterName": "Character Name",
     "characterNamePlaceholder": "Enter character name",
     "stress": "Stress",
@@ -15,12 +15,100 @@
       "empty": "No actions recorded yet",
       "incrementLabel": "+1",
       "decrementLabel": "-1",
-      "resetLabel": "Reset to 0"
+      "resetLabel": "Reset to 0",
+      "panicLabel": "Panic!"
     },
     "language": {
       "label": "Language",
       "en": "English",
       "fr": "French"
+    },
+    "panic": {
+      "nerveOfSteel": "Nerve of Steel (-2 to panic rolls)",
+      "roll": "Panic Roll",
+      "actionLoss": "You lose your next action.",
+      "actionLossSlow": "You lose your next slow action.",
+      "actionLossAll": "You lose all your actions.",
+      "panicTable": {
+        "1": {
+          "name": "KEEPING IT TOGETHER",
+          "description": "You manage to keep your nerves in check. Barely."
+        },
+        "2": {
+          "name": "KEEPING IT TOGETHER",
+          "description": "You manage to keep your nerves in check. Barely."
+        },
+        "3": {
+          "name": "KEEPING IT TOGETHER",
+          "description": "You manage to keep your nerves in check. Barely."
+        },
+        "4": {
+          "name": "KEEPING IT TOGETHER",
+          "description": "You manage to keep your nerves in check. Barely."
+        },
+        "5": {
+          "name": "KEEPING IT TOGETHER",
+          "description": "You manage to keep your nerves in check. Barely."
+        },
+        "6": {
+          "name": "KEEPING IT TOGETHER",
+          "description": "You manage to keep your nerves in check. Barely."
+        },
+        "7": {
+          "name": "NERVOUS TWITCH",
+          "description": "Your STRESS LEVEL, and the STRESS LEVEL of all friendly PCs in SHORT range of you, increases by one.",
+          "stressChange": 1,
+          "otherStressChange": 1
+        },
+        "8": {
+          "name": "TREMBLE",
+          "description": "You start to tremble uncontrollably. All skill rolls using AGILITY suffer a -2 modification until your panic stops."
+        },
+        "9": {
+          "name": "DROP ITEM",
+          "description": "Whether by stress, confusion or the realization that you're all going to die anyway, you drop a weapon or other important item—the GM decides which one. Your STRESS LEVEL increases by one.",
+          "stressChange": 1
+        },
+        "10": {
+          "name": "FREEZE",
+          "description": "You're frozen by fear or stress for one Round, losing your next slow action. Your STRESS LEVEL, and the STRESS LEVEL of all friendly PCs in SHORT range of you, increases by one.",
+          "stressChange": 1,
+          "otherStressChange": 1,
+          "actionLoss": "slow"
+        },
+        "11": {
+          "name": "SEEK COVER",
+          "description": "You must use your next action to move away from danger and find a safe spot if possible. You are allowed to make a retreat roll (see page 93) if you have an enemy at ENGAGED range. Your STRESS LEVEL is decreased by one, but the STRESS LEVEL of all friendly PCs in SHORT range of you increases by one. After one Round, you can act normally.",
+          "stressChange": -1,
+          "otherStressChange": 1,
+          "actionLoss": "all"
+        },
+        "12": {
+          "name": "SCREAM",
+          "description": "You scream your lungs out for one Round, losing your next slow action. Your STRESS LEVEL is decreased by one, but every friendly character who hears your scream must make an immediate Panic Roll.",
+          "stressChange": -1,
+          "actionLoss": "slow",
+          "notes": "Every friendly character who hears your scream must make an immediate Panic Roll."
+        },
+        "13": {
+          "name": "FLEE",
+          "description": "You just can't take it anymore. You must flee to a safe place and refuse to leave it. You won't attack anyone and won't attempt anything dangerous. You are not allowed to make a retreat roll (see page 93) if you have an enemy at ENGAGED range when you flee. Your STRESS LEVEL is decreased by one, but every friendly character who sees you run must make an immediate Panic Roll.",
+          "stressChange": -1,
+          "actionLoss": "all",
+          "notes": "Every friendly character who sees you run must make an immediate Panic Roll."
+        },
+        "14": {
+          "name": "BERSERK",
+          "description": "You must immediately attack the nearest person or creature, friendly or not. You won't stop until you or the target is Broken. Every friendly character who witnesses your rampaging must make an immediate Panic Roll.",
+          "actionLoss": "all",
+          "notes": "Every friendly character who witnesses your rampaging must make an immediate Panic Roll."
+        },
+        "15": {
+          "name": "CATATONIC",
+          "description": "You collapse to the floor and can't talk or move, staring blankly into oblivion.",
+          "actionLoss": "all"
+        }
+      }
     },
     "errors": {
       "storageUnavailable": "Warning: Data will not be saved. Enable localStorage or use regular browsing mode."

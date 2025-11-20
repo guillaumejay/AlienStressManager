@@ -3,6 +3,8 @@ import { useActionLog } from '@/composables/useActionLog'
 
 describe('useActionLog', () => {
   beforeEach(() => {
+    const { clearLog } = useActionLog()
+    clearLog()
     // Reset time mocking
     vi.useFakeTimers()
   })

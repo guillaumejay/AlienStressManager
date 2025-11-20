@@ -38,6 +38,8 @@ function getActionLabel(action: ActionLogEntry['action']): string {
       return t('app.actionLog.decrementLabel')
     case 'reset':
       return t('app.actionLog.resetLabel')
+    case 'panic':
+      return t('app.actionLog.panicLabel')
   }
 }
 </script>
@@ -96,29 +98,45 @@ function getActionLabel(action: ActionLogEntry['action']): string {
           <div
             v-for="(entry, index) in entries"
             :key="`${entry.timestamp}-${index}`"
-            class="flex items-center justify-between px-3 py-2 bg-[var(--color-alien-bg-tertiary)] rounded border border-[var(--color-alien-border)]"
+            class="px-3 py-2 bg-[var(--color-alien-bg-tertiary)] rounded border border-[var(--color-alien-border)]"
           >
-            <!-- Timestamp -->
-            <span class="text-sm font-mono text-[var(--color-alien-text-dim)]">
-              {{ formatTime(entry.timestamp) }}
-            </span>
+            <div class="flex items-center justify-between">
+              <!-- Timestamp -->
+              <span class="text-sm font-mono text-[var(--color-alien-text-dim)]">
+                {{ formatTime(entry.timestamp) }}
+              </span>
 
-            <!-- Action -->
-            <span
-              class="text-sm font-medium"
-              :class="{
-                'text-[var(--color-alien-accent)]': entry.action === 'increment',
-                'text-[var(--color-alien-warning)]': entry.action === 'decrement',
-                'text-[var(--color-alien-danger)]': entry.action === 'reset',
-              }"
-            >
-              {{ getActionLabel(entry.action) }}
-            </span>
+              <!-- Action -->
+              <span
+                data-testid="action-label"
+                class="text-sm font-medium"
+                :class="{
+                  'text-[var(--color-alien-accent)]': entry.action === 'increment',
+                  'text-[var(--color-alien-warning)]': entry.action === 'decrement',
+                  'text-[var(--color-alien-danger)]': entry.action === 'reset',
+                  'text-yellow-400': entry.action === 'panic',
+                }"
+              >
+                {{ getActionLabel(entry.action) }}
+                <span v-if="entry.fromPanic" class="text-xs text-gray-500"> ({{ t('app.panic.roll') }})</span>
+              </span>
 
-            <!-- Resulting Stress -->
-            <span class="text-sm font-bold text-[var(--color-alien-text)]">
-              {{ entry.resultingStress }}
-            </span>
+              <!-- Resulting Stress -->
+              <span class="text-sm font-bold text-[var(--color-alien-text)]">
+                {{ entry.resultingStress }}
+              </span>
+            </div>
+            <!-- Panic Details -->
+            <div v-if="entry.action === 'panic' && entry.panicDetails" class="mt-2 pt-2 border-t border-[var(--color-alien-border)] text-xs text-[var(--color-alien-text-dim)]">
+              <p>
+                {{ entry.panicDetails.effectName }}: 
+                {{ entry.panicDetails.dieRoll }} (d6) + {{ entry.panicDetails.stressBefore }} (stress)
+                <span v-if="entry.panicDetails.modifier !== 0">
+                  {{ entry.panicDetails.modifier > 0 ? '+' : '-' }} {{ Math.abs(entry.panicDetails.modifier) }} (mod)
+                </span>
+                = {{ entry.panicDetails.finalRoll }}
+              </p>
+            </div>
           </div>
         </div>
       </div>

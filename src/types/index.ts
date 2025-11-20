@@ -12,14 +12,40 @@ import type { Ref } from 'vue'
 export interface Character {
   name: string
   stress: number
+  hasNerveOfSteel: boolean
 }
 
-export type ActionType = 'increment' | 'decrement' | 'reset'
+export interface PanicEffect {
+  name: string
+  description: string
+  stressChange?: number
+  otherStressChange?: number
+  actionLoss?: 'slow' | 'all'
+  notes?: string
+}
+
+export interface PanicRollResult {
+  roll: number
+  effect: PanicEffect
+}
+
+
+export type ActionType = 'increment' | 'decrement' | 'reset' | 'panic'
+
+export interface PanicRollDetails {
+  dieRoll: number
+  stressBefore: number
+  modifier: number
+  finalRoll: number
+  effectName: string
+}
 
 export interface ActionLogEntry {
   timestamp: string // ISO 8601 format
   action: ActionType
   resultingStress: number
+  panicDetails?: PanicRollDetails
+  fromPanic?: boolean
 }
 
 export type Locale = 'en' | 'fr'
@@ -34,11 +60,18 @@ export interface UseCharacterStateReturn {
   incrementStress: () => void
   decrementStress: () => void
   resetStress: () => void
+  toggleNerveOfSteel: () => void
+  panicRoll: () => PanicRollResult
 }
 
 export interface UseActionLogReturn {
   entries: Readonly<Ref<ActionLogEntry[]>>
-  logAction: (action: ActionType, resultingStress: number) => void
+  logAction: (
+    action: ActionType,
+    resultingStress: number,
+    panicDetails?: PanicRollDetails,
+    fromPanic?: boolean
+  ) => void
   clearLog: () => void
 }
 
@@ -50,6 +83,7 @@ export interface UseLocalStorageReturn<T> {
 
 export interface UseI18nReturn {
   t: (key: string) => string
+  tm: (key: string) => any
   locale: Ref<Locale>
   setLocale: (newLocale: Locale) => void
 }
@@ -89,12 +123,13 @@ export function isLocale(value: string): value is Locale {
 }
 
 export function isActionType(value: string): value is ActionType {
-  return value === 'increment' || value === 'decrement' || value === 'reset'
+  return value === 'increment' || value === 'decrement' || value === 'reset' || value === 'panic'
 }
 
 export const DEFAULT_CHARACTER: Character = {
   name: '',
   stress: 0,
+  hasNerveOfSteel: false,
 }
 
 export const DEFAULT_LOCALE: Locale = 'en'

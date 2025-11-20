@@ -1,6 +1,14 @@
 import { useLocalStorage } from './useLocalStorage'
+import { useI18n } from './useI18n'
+import { useActionLog } from './useActionLog'
 import { STORAGE_KEYS, DEFAULT_CHARACTER } from '@/types'
-import type { UseCharacterStateReturn, Character } from '@/types'
+import type {
+  UseCharacterStateReturn,
+  Character,
+  PanicRollResult,
+  PanicEffect,
+  PanicRollDetails,
+} from '@/types'
 
 /**
  * Character state management composable with localStorage persistence
@@ -15,6 +23,8 @@ export function useCharacterState(): UseCharacterStateReturn {
     STORAGE_KEYS.CHARACTER,
     DEFAULT_CHARACTER,
   )
+  const { tm } = useI18n()
+  const { logAction } = useActionLog()
 
   /**
    * Update character name
@@ -24,8 +34,19 @@ export function useCharacterState(): UseCharacterStateReturn {
    */
   function updateName(newName: string): void {
     character.value = {
+      ...character.value,
       name: newName,
       stress: 0,
+    }
+  }
+
+  /**
+   * Toggle Nerve of Steel status
+   */
+  function toggleNerveOfSteel(): void {
+    character.value = {
+      ...character.value,
+      hasNerveOfSteel: !character.value.hasNerveOfSteel,
     }
   }
 
@@ -37,6 +58,7 @@ export function useCharacterState(): UseCharacterStateReturn {
       ...character.value,
       stress: character.value.stress + 1,
     }
+    logAction('increment', character.value.stress)
   }
 
   /**
@@ -47,6 +69,7 @@ export function useCharacterState(): UseCharacterStateReturn {
       ...character.value,
       stress: Math.max(0, character.value.stress - 1),
     }
+    logAction('decrement', character.value.stress)
   }
 
   /**
@@ -57,6 +80,50 @@ export function useCharacterState(): UseCharacterStateReturn {
       ...character.value,
       stress: 0,
     }
+    logAction('reset', character.value.stress)
+  }
+
+  /**
+   * Perform a panic roll
+   */
+  function panicRoll(): PanicRollResult {
+    const stressBefore = character.value.stress
+    const dieRoll = Math.floor(Math.random() * 6) + 1
+    const modifier = character.value.hasNerveOfSteel ? -2 : 0
+    const finalRoll = Math.max(1, dieRoll + stressBefore + modifier)
+
+    const panicTable = tm('app.panic.panicTable')
+    const effectIndex = Math.min(finalRoll, 15).toString()
+    const effect: PanicEffect = panicTable[effectIndex]
+
+    const panicDetails: PanicRollDetails = {
+      dieRoll,
+      stressBefore,
+      modifier,
+      finalRoll,
+      effectName: effect.name,
+    }
+
+    logAction('panic', stressBefore, panicDetails)
+
+    if (effect.stressChange) {
+      const resultingStress = Math.max(0, stressBefore + effect.stressChange)
+      character.value = {
+        ...character.value,
+        stress: resultingStress,
+      }
+      logAction(
+        effect.stressChange > 0 ? 'increment' : 'decrement',
+        resultingStress,
+        undefined,
+        true
+      )
+    }
+
+    return {
+      roll: finalRoll,
+      effect,
+    }
   }
 
   return {
@@ -65,5 +132,7 @@ export function useCharacterState(): UseCharacterStateReturn {
     incrementStress,
     decrementStress,
     resetStress,
+    toggleNerveOfSteel,
+    panicRoll,
   }
 }

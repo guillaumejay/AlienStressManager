@@ -348,4 +348,65 @@ describe('ActionLog', () => {
     )
     expect(chevron).toBeDefined()
   })
+
+  it('should display panic details for panic actions', () => {
+    const entries: ActionLogEntry[] = [
+      {
+        timestamp: '2025-11-19T14:30:00.000Z',
+        action: 'panic',
+        resultingStress: 7,
+        panicDetails: {
+          dieRoll: 1,
+          stressBefore: 8,
+          modifier: -2,
+          finalRoll: 7,
+          effectName: 'Nervous Twitch',
+        },
+      },
+    ]
+
+    const wrapper = mount(ActionLog, {
+      props: {
+        entries,
+        isVisible: true
+      },
+      global: {
+        plugins: [i18n]
+      }
+    })
+
+    const text = wrapper.text()
+    expect(text).toContain('Panic!')
+    const details = wrapper.find('.text-xs')
+    expect(details.text()).toContain('Nervous Twitch')
+    expect(details.text()).toContain('1 (d6)')
+    expect(details.text()).toContain('+ 8 (stress)')
+    expect(details.text()).toContain('- 2 (mod)')
+    expect(details.text()).toContain('= 7')
+  })
+
+  it('should display from panic label for stress changes from panic', () => {
+    const entries: ActionLogEntry[] = [
+      {
+        timestamp: '2025-11-19T14:30:00.000Z',
+        action: 'decrement',
+        resultingStress: 7,
+        fromPanic: true,
+      },
+    ]
+
+    const wrapper = mount(ActionLog, {
+      props: {
+        entries,
+        isVisible: true
+      },
+      global: {
+        plugins: [i18n]
+      }
+    })
+
+    const actionLabel = wrapper.find('[data-testid="action-label"]')
+    expect(actionLabel.text()).toContain(i18n.global.t('app.actionLog.decrementLabel'))
+    expect(actionLabel.text()).toContain(`(${i18n.global.t('app.panic.roll')})`)
+  })
 })

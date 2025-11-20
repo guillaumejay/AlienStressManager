@@ -13,7 +13,7 @@ import type { Locale } from '@/types'
  * @returns Translation function, current locale, and setLocale function
  */
 export function useI18n() {
-  const { t, locale: vueLocale } = useVueI18n()
+  const { t, tm, locale: vueLocale } = useVueI18n()
 
   // Persist locale preference to localStorage
   const { storedValue: storedLocale } = useLocalStorage<Locale>(
@@ -46,6 +46,7 @@ export function useI18n() {
 
   return {
     t,
+    tm,
     locale: vueLocale as import('vue').Ref<Locale>,
     setLocale,
   }

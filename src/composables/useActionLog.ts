@@ -1,5 +1,12 @@
 import { ref, computed } from 'vue'
-import type { UseActionLogReturn, ActionType, ActionLogEntry } from '@/types'
+import type {
+  UseActionLogReturn,
+  ActionType,
+  ActionLogEntry,
+  PanicRollDetails,
+} from '@/types'
+
+const logEntries = ref<ActionLogEntry[]>([])
 
 /**
  * Action log management composable (session-scoped, in-memory only)
@@ -11,7 +18,6 @@ import type { UseActionLogReturn, ActionType, ActionLogEntry } from '@/types'
  * @returns Action log entries and manipulation functions
  */
 export function useActionLog(): UseActionLogReturn {
-  const logEntries = ref<ActionLogEntry[]>([])
 
   /**
    * Entries in reverse chronological order (newest first)
@@ -24,11 +30,18 @@ export function useActionLog(): UseActionLogReturn {
    * @param action - Type of action performed
    * @param resultingStress - Stress level after the action
    */
-  function logAction(action: ActionType, resultingStress: number): void {
+  function logAction(
+    action: ActionType,
+    resultingStress: number,
+    panicDetails?: PanicRollDetails,
+    fromPanic?: boolean
+  ): void {
     const entry: ActionLogEntry = {
       timestamp: new Date().toISOString(),
       action,
       resultingStress,
+      panicDetails,
+      fromPanic,
     }
 
     logEntries.value.push(entry)

@@ -4,16 +4,31 @@ import { useCharacterState } from '@/composables/useCharacterState'
 import { useActionLog } from '@/composables/useActionLog'
 import { useI18n } from '@/composables/useI18n'
 import ActionLog from './ActionLog.vue'
+import type { PanicRollResult } from '@/types'
 
 const { t } = useI18n()
-const { character, updateName, incrementStress, decrementStress, resetStress } = useCharacterState()
-const { entries, logAction } = useActionLog()
+const {
+  character,
+  updateName,
+  incrementStress,
+  decrementStress,
+  resetStress,
+  toggleNerveOfSteel,
+  panicRoll,
+} = useCharacterState()
+const { entries } = useActionLog()
 
 const isLogVisible = ref(false)
+const panicResult = ref<PanicRollResult | null>(null)
 
 function toggleLog(): void {
   isLogVisible.value = !isLogVisible.value
 }
+
+function handlePanicRoll(): void {
+  panicResult.value = panicRoll()
+}
+
 
 function handleNameInput(event: Event): void {
   const input = event.target as HTMLInputElement
@@ -23,24 +38,21 @@ function handleNameInput(event: Event): void {
 
 function handleIncrement(): void {
   incrementStress()
-  logAction('increment', character.value.stress)
 }
 
 function handleDecrement(): void {
   decrementStress()
-  logAction('decrement', character.value.stress)
 }
 
 function handleReset(): void {
   resetStress()
-  logAction('reset', character.value.stress)
 }
 </script>
 
 <template>
   <div class="w-full max-w-2xl mx-auto">
     <!-- Character Name Input -->
-    <div class="mb-8">
+    <div class="mb-4">
       <label
         for="character-name"
         class="block text-sm font-medium mb-2 text-[var(--color-alien-text)]"
@@ -55,6 +67,19 @@ function handleReset(): void {
         @input="handleNameInput"
         class="w-full px-4 py-3 bg-[var(--color-alien-bg-secondary)] text-[var(--color-alien-text)] border border-[var(--color-alien-border)] rounded focus:outline-none focus:border-[var(--color-alien-accent)] transition-colors text-lg"
       />
+    </div>
+
+    <!-- Nerve of Steel Checkbox -->
+    <div class="mb-8">
+      <label class="flex items-center space-x-3 cursor-pointer">
+        <input
+          type="checkbox"
+          :checked="character.hasNerveOfSteel"
+          @change="toggleNerveOfSteel"
+          class="h-5 w-5 bg-[var(--color-alien-bg-secondary)] border-[var(--color-alien-border)] rounded text-[var(--color-alien-accent)] focus:ring-[var(--color-alien-accent)]"
+        />
+        <span class="text-[var(--color-alien-text)]">{{ t('app.panic.nerveOfSteel') }}</span>
+      </label>
     </div>
 
     <!-- Stress Tracker -->
@@ -117,6 +142,36 @@ function handleReset(): void {
           </svg>
           <span class="text-lg font-medium">{{ t('app.actions.increment') }}</span>
         </button>
+      </div>
+
+      <!-- Panic Roll Button -->
+      <div class="flex justify-center mt-4">
+        <button
+          @click="handlePanicRoll"
+          :aria-label="t('app.panic.roll')"
+          class="px-8 py-4 bg-yellow-500 hover:bg-yellow-600 text-black border border-yellow-600 rounded transition-all text-lg font-bold"
+        >
+          {{ t('app.panic.roll') }}
+        </button>
+      </div>
+
+      <!-- Panic Result -->
+      <div v-if="panicResult" data-testid="panic-result" class="mt-8 p-6 bg-[var(--color-alien-bg-secondary)] border border-[var(--color-alien-border)] rounded">
+        <h3 class="text-2xl font-bold text-[var(--color-alien-text-bright)] mb-4">
+          {{ panicResult.effect.name }} ({{ panicResult.roll }})
+        </h3>
+        <p class="text-[var(--color-alien-text)] mb-4">{{ panicResult.effect.description }}</p>
+        <div v-if="panicResult.effect.notes || panicResult.effect.actionLoss" class="mt-4 p-4 bg-red-900 bg-opacity-50 border border-red-700 rounded">
+          <p v-if="panicResult.effect.actionLoss === 'slow'" class="text-yellow-300">
+            {{ t('app.panic.actionLossSlow') }}
+          </p>
+          <p v-else-if="panicResult.effect.actionLoss === 'all'" class="text-yellow-300">
+            {{ t('app.panic.actionLossAll') }}
+          </p>
+          <p v-if="panicResult.effect.notes" class="text-yellow-300">
+            {{ panicResult.effect.notes }}
+          </p>
+        </div>
       </div>
 
       <!-- Action Log -->
