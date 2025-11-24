@@ -4,6 +4,7 @@ import type {
   ActionType,
   ActionLogEntry,
   PanicRollDetails,
+  DiceRollDetails,
 } from '@/types'
 
 const logEntries = ref<ActionLogEntry[]>([])
@@ -29,18 +30,23 @@ export function useActionLog(): UseActionLogReturn {
    *
    * @param action - Type of action performed
    * @param resultingStress - Stress level after the action
+   * @param panicDetails - Details for panic roll actions
+   * @param fromPanic - Whether this action resulted from a panic effect
+   * @param diceRollDetails - Details for dice roll actions
    */
   function logAction(
     action: ActionType,
     resultingStress: number,
     panicDetails?: PanicRollDetails,
-    fromPanic?: boolean
+    fromPanic?: boolean,
+    diceRollDetails?: DiceRollDetails
   ): void {
     const entry: ActionLogEntry = {
       timestamp: new Date().toISOString(),
       action,
       resultingStress,
       panicDetails,
+      diceRollDetails,
       fromPanic,
     }
 

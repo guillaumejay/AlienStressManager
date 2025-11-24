@@ -16,7 +16,18 @@
       "incrementLabel": "+1",
       "decrementLabel": "-1",
       "resetLabel": "Réinitialisation à 0",
-      "panicLabel": "Panique !"
+      "panicLabel": "Panique !",
+      "diceRollLabel": "Lancer de Dés"
+    },
+    "diceRoller": {
+      "title": "Lanceur de Dés",
+      "baseDice": "Dés de Base",
+      "stressDice": "Dés de Stress",
+      "roll": "Lancer",
+      "successes": "{n} succès | {n} succès",
+      "noSuccesses": "Aucun succès",
+      "panic": "PANIQUE !",
+      "startPanicRoll": "Lancer un Jet de Panique"
     },
     "language": {
       "label": "Langue",

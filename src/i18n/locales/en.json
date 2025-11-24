@@ -16,7 +16,18 @@
       "incrementLabel": "+1",
       "decrementLabel": "-1",
       "resetLabel": "Reset to 0",
-      "panicLabel": "Panic!"
+      "panicLabel": "Panic!",
+      "diceRollLabel": "Dice Roll"
+    },
+    "diceRoller": {
+      "title": "Dice Roller",
+      "baseDice": "Base Dice",
+      "stressDice": "Stress Dice",
+      "roll": "Roll",
+      "successes": "{n} success | {n} successes",
+      "noSuccesses": "No successes",
+      "panic": "PANIC!",
+      "startPanicRoll": "Start Panic Roll"
     },
     "language": {
       "label": "Language",

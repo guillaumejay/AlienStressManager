@@ -3,7 +3,12 @@
     "allow": [
       "Bash(npm run type-check:*)",
       "Bash(npm test:unit:*)",
-      "Bash(npm run test:unit:*)"
+      "Bash(npm run test:unit:*)",
+      "Bash(npx openspec:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm type-check:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm test:unit:*)"
     ],
     "deny": [],
     "ask": []

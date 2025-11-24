@@ -40,6 +40,8 @@ function getActionLabel(action: ActionLogEntry['action']): string {
       return t('app.actionLog.resetLabel')
     case 'panic':
       return t('app.actionLog.panicLabel')
+    case 'diceRoll':
+      return t('app.actionLog.diceRollLabel')
   }
 }
 </script>
@@ -115,6 +117,7 @@ function getActionLabel(action: ActionLogEntry['action']): string {
                   'text-[var(--color-alien-warning)]': entry.action === 'decrement',
                   'text-[var(--color-alien-danger)]': entry.action === 'reset',
                   'text-yellow-400': entry.action === 'panic',
+                  'text-blue-400': entry.action === 'diceRoll',
                 }"
               >
                 {{ getActionLabel(entry.action) }}
@@ -129,13 +132,47 @@ function getActionLabel(action: ActionLogEntry['action']): string {
             <!-- Panic Details -->
             <div v-if="entry.action === 'panic' && entry.panicDetails" class="mt-2 pt-2 border-t border-[var(--color-alien-border)] text-xs text-[var(--color-alien-text-dim)]">
               <p>
-                {{ entry.panicDetails.effectName }}: 
+                {{ entry.panicDetails.effectName }}:
                 {{ entry.panicDetails.dieRoll }} (d6) + {{ entry.panicDetails.stressBefore }} (stress)
                 <span v-if="entry.panicDetails.modifier !== 0">
                   {{ entry.panicDetails.modifier > 0 ? '+' : '-' }} {{ Math.abs(entry.panicDetails.modifier) }} (mod)
                 </span>
                 = {{ entry.panicDetails.finalRoll }}
               </p>
+            </div>
+            <!-- Dice Roll Details -->
+            <div v-if="entry.action === 'diceRoll' && entry.diceRollDetails" class="mt-2 pt-2 border-t border-[var(--color-alien-border)] text-xs">
+              <div class="flex flex-wrap gap-1 items-center">
+                <!-- Base dice (sorted) -->
+                <span
+                  v-for="(die, i) in [...entry.diceRollDetails.baseDiceResults].sort((a, b) => b - a)"
+                  :key="'base-' + i"
+                  class="inline-flex items-center justify-center w-6 h-6 rounded border font-mono font-bold"
+                  :class="die === 6 ? 'bg-green-800 border-green-600 text-green-300' : 'bg-[var(--color-alien-bg-secondary)] border-[var(--color-alien-border)] text-[var(--color-alien-text-dim)]'"
+                >
+                  {{ die }}
+                </span>
+                <!-- Separator -->
+                <span v-if="entry.diceRollDetails.baseDiceResults.length > 0 && entry.diceRollDetails.stressDiceResults.length > 0" class="text-[var(--color-alien-text-dim)] mx-1">|</span>
+                <!-- Stress dice (sorted) -->
+                <span
+                  v-for="(die, i) in [...entry.diceRollDetails.stressDiceResults].sort((a, b) => b - a)"
+                  :key="'stress-' + i"
+                  class="inline-flex items-center justify-center w-6 h-6 rounded border font-mono font-bold"
+                  :class="{
+                    'bg-green-800 border-green-600 text-green-300': die === 6,
+                    'bg-red-800 border-red-600 text-red-300': die === 1,
+                    'bg-yellow-900 border-yellow-700 text-yellow-400': die !== 6 && die !== 1
+                  }"
+                >
+                  {{ die }}
+                </span>
+                <!-- Result summary -->
+                <span class="ml-2 text-[var(--color-alien-text-dim)]">
+                  = {{ entry.diceRollDetails.successes }} {{ entry.diceRollDetails.successes === 1 ? 'success' : 'successes' }}
+                </span>
+                <span v-if="entry.diceRollDetails.panicTriggered" class="text-red-400 font-bold ml-1">PANIC!</span>
+              </div>
             </div>
           </div>
         </div>

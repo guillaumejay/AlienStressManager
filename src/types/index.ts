@@ -29,8 +29,26 @@ export interface PanicRollResult {
   effect: PanicEffect
 }
 
+export interface DiceRollConfig {
+  baseDice: number
+  stressDice: number
+}
 
-export type ActionType = 'increment' | 'decrement' | 'reset' | 'panic'
+export interface DiceRollResult {
+  baseDiceResults: number[]
+  stressDiceResults: number[]
+  successes: number
+  panicTriggered: boolean
+}
+
+export interface DiceRollDetails {
+  baseDiceResults: number[]
+  stressDiceResults: number[]
+  successes: number
+  panicTriggered: boolean
+}
+
+export type ActionType = 'increment' | 'decrement' | 'reset' | 'panic' | 'diceRoll'
 
 export interface PanicRollDetails {
   dieRoll: number
@@ -45,6 +63,7 @@ export interface ActionLogEntry {
   action: ActionType
   resultingStress: number
   panicDetails?: PanicRollDetails
+  diceRollDetails?: DiceRollDetails
   fromPanic?: boolean
 }
 
@@ -70,7 +89,8 @@ export interface UseActionLogReturn {
     action: ActionType,
     resultingStress: number,
     panicDetails?: PanicRollDetails,
-    fromPanic?: boolean
+    fromPanic?: boolean,
+    diceRollDetails?: DiceRollDetails
   ) => void
   clearLog: () => void
 }
@@ -123,7 +143,7 @@ export function isLocale(value: string): value is Locale {
 }
 
 export function isActionType(value: string): value is ActionType {
-  return value === 'increment' || value === 'decrement' || value === 'reset' || value === 'panic'
+  return value === 'increment' || value === 'decrement' || value === 'reset' || value === 'panic' || value === 'diceRoll'
 }
 
 export const DEFAULT_CHARACTER: Character = {

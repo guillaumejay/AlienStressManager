@@ -16,3 +16,7 @@ It's build using Vue 3 and Tailwind 4
 ## [Open-Spec](https://openspec.dev/) / Gemini Pro (2.5 - 3)
  - Second PR (panic rolls) : openspec\specs
  - Console interaction in Gemini was a bit tedious, need to test with Claude Code
+
+ ## [Open-Spec](https://openspec.dev/) / Claude Sonnet (4.5)
+ - Thired PR (Add dice rolling) : openspec\specs
+ - 

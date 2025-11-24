@@ -4,7 +4,8 @@ import { useCharacterState } from '@/composables/useCharacterState'
 import { useActionLog } from '@/composables/useActionLog'
 import { useI18n } from '@/composables/useI18n'
 import ActionLog from './ActionLog.vue'
-import type { PanicRollResult } from '@/types'
+import DiceRoller from './DiceRoller.vue'
+import type { PanicRollResult, DiceRollResult } from '@/types'
 
 const { t } = useI18n()
 const {
@@ -16,7 +17,7 @@ const {
   toggleNerveOfSteel,
   panicRoll,
 } = useCharacterState()
-const { entries } = useActionLog()
+const { entries, logAction } = useActionLog()
 
 const isLogVisible = ref(false)
 const panicResult = ref<PanicRollResult | null>(null)
@@ -62,6 +63,19 @@ function handleDecrement(): void {
 
 function handleReset(): void {
   resetStress()
+}
+
+function handleDiceRoll(result: DiceRollResult): void {
+  logAction('diceRoll', character.value.stress, undefined, undefined, {
+    baseDice: result.baseDiceResults.length,
+    stressDice: result.stressDiceResults.length,
+    successes: result.successes,
+    panicTriggered: result.panicTriggered,
+  })
+}
+
+function handleDiceRollerPanicRoll(): void {
+  handlePanicRoll()
 }
 </script>
 
@@ -162,6 +176,13 @@ function handleReset(): void {
           <span class="text-lg font-medium">{{ t('app.actions.increment') }}</span>
         </button>
       </div>
+
+      <!-- Dice Roller -->
+      <DiceRoller
+        :stress-dice="character.stress"
+        @roll="handleDiceRoll"
+        @start-panic-roll="handleDiceRollerPanicRoll"
+      />
 
       <!-- Panic Roll Button -->
       <div class="flex justify-center mt-4">
