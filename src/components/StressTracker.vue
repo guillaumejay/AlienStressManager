@@ -22,6 +22,7 @@ const { entries, logAction } = useActionLog()
 const isLogVisible = ref(false)
 const panicResult = ref<PanicRollResult | null>(null)
 const stressChangeClass = ref('')
+const panicRequired = ref(false)
 
 watch(
   () => character.value.stress,
@@ -44,6 +45,7 @@ function toggleLog(): void {
 
 function handlePanicRoll(): void {
   panicResult.value = panicRoll()
+  panicRequired.value = false
 }
 
 
@@ -67,15 +69,15 @@ function handleReset(): void {
 
 function handleDiceRoll(result: DiceRollResult): void {
   logAction('diceRoll', character.value.stress, undefined, undefined, {
-    baseDice: result.baseDiceResults.length,
-    stressDice: result.stressDiceResults.length,
+    baseDiceResults: result.baseDiceResults,
+    stressDiceResults: result.stressDiceResults,
     successes: result.successes,
     panicTriggered: result.panicTriggered,
   })
-}
 
-function handleDiceRollerPanicRoll(): void {
-  handlePanicRoll()
+  if (result.panicTriggered) {
+    panicRequired.value = true
+  }
 }
 </script>
 
@@ -181,7 +183,6 @@ function handleDiceRollerPanicRoll(): void {
       <DiceRoller
         :stress-dice="character.stress"
         @roll="handleDiceRoll"
-        @start-panic-roll="handleDiceRollerPanicRoll"
       />
 
       <!-- Panic Roll Button -->
@@ -190,6 +191,7 @@ function handleDiceRollerPanicRoll(): void {
           @click="handlePanicRoll"
           :aria-label="t('app.panic.roll')"
           class="px-8 py-4 bg-yellow-500 hover:bg-yellow-600 text-black border border-yellow-600 rounded transition-all text-lg font-bold"
+          :class="{ 'animate-pulse ring-4 ring-red-500 ring-opacity-75': panicRequired }"
         >
           {{ t('app.panic.roll') }}
         </button>

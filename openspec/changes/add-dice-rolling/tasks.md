@@ -2,7 +2,7 @@
 
 - [x] 1.1 Add `DiceRollConfig` type (baseDice: number, stressDice: number)
 - [x] 1.2 Add `DiceRollResult` type (baseDiceResults: number[], stressDiceResults: number[], successes: number, panicTriggered: boolean)
-- [x] 1.3 Add `DiceRollDetails` type for action log
+- [x] 1.3 Add `DiceRollDetails` type for action log (updated to include individual dice results)
 - [x] 1.4 Extend `ActionType` to include `'diceRoll'`
 
 ## 2. Composable Implementation
@@ -31,24 +31,24 @@
 - [x] 4.1 Create `DiceRoller.vue` component with:
   - [x] 4.1.1 Number input for base dice (stepper or direct input)
   - [x] 4.1.2 Read-only display for stress dice (auto-set from character stress)
-  - [x] 4.1.3 Roll button
+  - [x] 4.1.3 Roll button with dice animation while rolling
   - [x] 4.1.4 Results display (successes count)
   - [x] 4.1.5 Panic indicator when triggered
-  - [x] 4.1.6 "Start Panic Roll" button when panic triggered
+  - [x] 4.1.6 ~~"Start Panic Roll" button when panic triggered~~ (moved to StressTracker - highlights existing panic roll button)
 - [x] 4.2 Style component with Tailwind using existing design tokens
 - [x] 4.3 Ensure mobile-first responsive design
 
 ## 5. Integration
 
 - [x] 5.1 Integrate `DiceRoller` component into `StressTracker.vue`
-- [x] 5.2 Connect panic roll button to existing `panicRoll()` function
-- [x] 5.3 Log dice rolls to action history
+- [x] 5.2 Highlight existing panic roll button when panic triggered (clears when panic is rolled)
+- [x] 5.3 Log dice rolls to action history with individual dice results
 
 ## 6. Action Log Updates
 
 - [x] 6.1 Update `ActionLog.vue` to display dice roll entries
-- [x] 6.2 Show dice configuration (base + stress)
-- [x] 6.3 Show successes and panic status
+- [x] 6.2 Show individual dice values sorted (base dice, then stress dice)
+- [x] 6.3 Show successes (green), panic dice (red for 1s), and stress dice (yellow)
 
 ## 7. Testing
 
@@ -58,8 +58,9 @@
   - [x] 7.1.3 Test panic detection (1 on stress dice)
 - [x] 7.2 Component tests for `DiceRoller.vue`:
   - [x] 7.2.1 Test stress dice displays character's current stress (read-only)
-  - [x] 7.2.2 Test roll button triggers roll
-  - [x] 7.2.3 Test panic button appears when panic triggered
+  - [x] 7.2.2 Test roll button triggers roll (with animation delay)
+  - [x] 7.2.3 Test panic indicator appears when panic triggered
+  - [x] 7.2.4 Test dice animation shows while rolling
 - [x] 7.3 Run type-check and lint
 
 ## 8. Validation

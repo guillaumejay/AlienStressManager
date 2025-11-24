@@ -16,6 +16,7 @@ describe('DiceRoller', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.useRealTimers()
   })
 
   it('should display stress dice as character current stress (read-only)', () => {
@@ -49,7 +50,9 @@ describe('DiceRoller', () => {
     expect(wrapper.find('.text-yellow-400').text()).toBe('7')
   })
 
-  it('should emit roll event when roll button is clicked', async () => {
+  it('should emit roll event after animation completes', async () => {
+    vi.useFakeTimers()
+
     const wrapper = mount(DiceRoller, {
       props: {
         stressDice: 2,
@@ -69,6 +72,13 @@ describe('DiceRoller', () => {
     await rollButton?.trigger('click')
     await nextTick()
 
+    // Roll event should not be emitted immediately (animation in progress)
+    expect(wrapper.emitted('roll')).toBeFalsy()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
     expect(wrapper.emitted('roll')).toBeTruthy()
     expect(wrapper.emitted('roll')?.length).toBe(1)
 
@@ -82,7 +92,8 @@ describe('DiceRoller', () => {
     expect(emittedResult.stressDiceResults).toHaveLength(2)
   })
 
-  it('should show panic button when panic is triggered', async () => {
+  it('should show panic indicator when panic is triggered', async () => {
+    vi.useFakeTimers()
     // Mock random to always return 0 (which gives die result of 1)
     vi.spyOn(Math, 'random').mockReturnValue(0)
 
@@ -105,12 +116,16 @@ describe('DiceRoller', () => {
     await rollButton?.trigger('click')
     await nextTick()
 
-    // Should show panic indicator and panic button
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Should show panic indicator (but NOT panic roll button - that's handled by StressTracker now)
     expect(wrapper.text()).toContain('PANIC!')
-    expect(wrapper.text()).toContain('Start Panic Roll')
   })
 
-  it('should not show panic button when panic is not triggered', async () => {
+  it('should not show panic indicator when panic is not triggered', async () => {
+    vi.useFakeTimers()
     // Mock random to always return 0.999 (which gives die result of 6, no 1s)
     vi.spyOn(Math, 'random').mockReturnValue(0.999)
 
@@ -133,14 +148,16 @@ describe('DiceRoller', () => {
     await rollButton?.trigger('click')
     await nextTick()
 
-    // Should NOT show panic button
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Should NOT show panic indicator
     expect(wrapper.text()).not.toContain('PANIC!')
-    expect(wrapper.text()).not.toContain('Start Panic Roll')
   })
 
-  it('should emit startPanicRoll when panic roll button is clicked', async () => {
-    // Mock random to trigger panic
-    vi.spyOn(Math, 'random').mockReturnValue(0)
+  it('should show dice animation while rolling', async () => {
+    vi.useFakeTimers()
 
     const wrapper = mount(DiceRoller, {
       props: {
@@ -156,19 +173,20 @@ describe('DiceRoller', () => {
     await incrementButton.trigger('click')
     await nextTick()
 
-    // Roll
+    // Click roll button
     const rollButton = wrapper.findAll('button').find((btn) => btn.text().includes('Roll'))
     await rollButton?.trigger('click')
     await nextTick()
 
-    // Click panic roll button
-    const panicButton = wrapper.findAll('button').find((btn) =>
-      btn.text().includes('Start Panic Roll')
-    )
-    await panicButton?.trigger('click')
+    // Should show animation (dice-roll-anim class)
+    expect(wrapper.findAll('.dice-roll-anim').length).toBeGreaterThan(0)
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
     await nextTick()
 
-    expect(wrapper.emitted('startPanicRoll')).toBeTruthy()
+    // Animation should be gone, roll button should be back
+    expect(wrapper.findAll('.dice-roll-anim').length).toBe(0)
   })
 
   it('should allow incrementing and decrementing base dice', async () => {
@@ -234,6 +252,7 @@ describe('DiceRoller', () => {
   })
 
   it('should display success count in results', async () => {
+    vi.useFakeTimers()
     // Mock to get all 6s (successes)
     vi.spyOn(Math, 'random').mockReturnValue(0.999)
 
@@ -256,6 +275,10 @@ describe('DiceRoller', () => {
     // Roll
     const rollButton = wrapper.findAll('button').find((btn) => btn.text().includes('Roll'))
     await rollButton?.trigger('click')
+    await nextTick()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
     await nextTick()
 
     // Should show 5 successes (3 base + 2 stress, all 6s)

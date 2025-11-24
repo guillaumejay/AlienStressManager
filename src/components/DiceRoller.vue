@@ -12,13 +12,13 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   roll: [result: DiceRollResult]
-  startPanicRoll: []
 }>()
 
 const { t } = useI18n()
 
 const baseDice = ref(0)
 const lastResult = ref<DiceRollResult | null>(null)
+const isRolling = ref(false)
 
 function incrementBaseDice(): void {
   baseDice.value++
@@ -31,23 +31,27 @@ function decrementBaseDice(): void {
 }
 
 function handleRoll(): void {
-  const result = rollDice({
-    baseDice: baseDice.value,
-    stressDice: props.stressDice,
-  })
-  lastResult.value = result
-  emit('roll', result)
-}
+  if (isRolling.value) return
 
-function handleStartPanicRoll(): void {
-  emit('startPanicRoll')
+  isRolling.value = true
+  lastResult.value = null
+
+  // Simulate dice rolling animation for 1.5 seconds
+  setTimeout(() => {
+    const result = rollDice({
+      baseDice: baseDice.value,
+      stressDice: props.stressDice,
+    })
+    lastResult.value = result
+    isRolling.value = false
+    emit('roll', result)
+  }, 1500)
 }
 
 function formatSuccesses(count: number): string {
   if (count === 0) {
     return t('app.diceRoller.noSuccesses')
   }
-  // Simple pluralization
   return t('app.diceRoller.successes', { n: count })
 }
 </script>
@@ -69,7 +73,7 @@ function formatSuccesses(count: number): string {
           <button
             type="button"
             @click="decrementBaseDice"
-            :disabled="baseDice === 0"
+            :disabled="baseDice === 0 || isRolling"
             class="w-10 h-10 flex items-center justify-center bg-[var(--color-alien-bg-tertiary)] hover:bg-[var(--color-alien-border)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-alien-text)] border border-[var(--color-alien-border)] rounded transition-colors"
             aria-label="Decrease base dice"
           >
@@ -83,7 +87,8 @@ function formatSuccesses(count: number): string {
           <button
             type="button"
             @click="incrementBaseDice"
-            class="w-10 h-10 flex items-center justify-center bg-[var(--color-alien-bg-tertiary)] hover:bg-[var(--color-alien-border)] text-[var(--color-alien-text)] border border-[var(--color-alien-border)] rounded transition-colors"
+            :disabled="isRolling"
+            class="w-10 h-10 flex items-center justify-center bg-[var(--color-alien-bg-tertiary)] hover:bg-[var(--color-alien-border)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-alien-text)] border border-[var(--color-alien-border)] rounded transition-colors"
             aria-label="Increase base dice"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,18 +111,40 @@ function formatSuccesses(count: number): string {
       </div>
     </div>
 
-    <!-- Roll Button -->
-    <button
-      type="button"
-      @click="handleRoll"
-      :disabled="baseDice === 0 && stressDice === 0"
-      class="w-full py-3 bg-[var(--color-alien-accent)] hover:bg-[var(--color-alien-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-alien-text-bright)] font-bold rounded transition-colors"
-    >
-      {{ t('app.diceRoller.roll') }}
-    </button>
+    <!-- Roll Button / Dice Animation -->
+    <div class="relative">
+      <!-- Rolling Animation -->
+      <div
+        v-if="isRolling"
+        class="w-full py-3 bg-[var(--color-alien-accent)] text-[var(--color-alien-text-bright)] font-bold rounded flex items-center justify-center gap-3"
+      >
+        <div class="flex gap-2">
+          <span class="dice-roll-anim inline-block w-8 h-8 bg-white text-black rounded font-mono font-bold text-lg flex items-center justify-center" style="animation-delay: 0ms;">
+            <span class="dice-face">6</span>
+          </span>
+          <span class="dice-roll-anim inline-block w-8 h-8 bg-yellow-400 text-black rounded font-mono font-bold text-lg flex items-center justify-center" style="animation-delay: 100ms;">
+            <span class="dice-face">3</span>
+          </span>
+          <span class="dice-roll-anim inline-block w-8 h-8 bg-white text-black rounded font-mono font-bold text-lg flex items-center justify-center" style="animation-delay: 200ms;">
+            <span class="dice-face">1</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Roll Button -->
+      <button
+        v-else
+        type="button"
+        @click="handleRoll"
+        :disabled="baseDice === 0 && stressDice === 0"
+        class="w-full py-3 bg-[var(--color-alien-accent)] hover:bg-[var(--color-alien-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-alien-text-bright)] font-bold rounded transition-colors"
+      >
+        {{ t('app.diceRoller.roll') }}
+      </button>
+    </div>
 
     <!-- Results Display -->
-    <div v-if="lastResult" class="mt-4 p-4 bg-[var(--color-alien-bg-tertiary)] border border-[var(--color-alien-border)] rounded">
+    <div v-if="lastResult && !isRolling" class="mt-4 p-4 bg-[var(--color-alien-bg-tertiary)] border border-[var(--color-alien-border)] rounded">
       <!-- Successes -->
       <div class="text-center mb-2">
         <span class="text-2xl font-bold" :class="lastResult.successes > 0 ? 'text-green-400' : 'text-[var(--color-alien-text-dim)]'">
@@ -127,21 +154,45 @@ function formatSuccesses(count: number): string {
 
       <!-- Panic Indicator -->
       <div v-if="lastResult.panicTriggered" class="text-center">
-        <div class="inline-block px-4 py-2 bg-red-900 border border-red-600 rounded">
+        <div class="inline-block px-4 py-2 bg-red-900 border border-red-600 rounded animate-pulse">
           <span class="text-xl font-bold text-red-400">
             {{ t('app.diceRoller.panic') }}
           </span>
         </div>
-
-        <!-- Start Panic Roll Button -->
-        <button
-          type="button"
-          @click="handleStartPanicRoll"
-          class="mt-3 w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded transition-colors"
-        >
-          {{ t('app.diceRoller.startPanicRoll') }}
-        </button>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.dice-roll-anim {
+  animation: dice-bounce 0.3s ease-in-out infinite;
+}
+
+.dice-roll-anim .dice-face {
+  animation: dice-number 0.15s steps(1) infinite;
+}
+
+@keyframes dice-bounce {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(15deg);
+  }
+}
+
+@keyframes dice-number {
+  0% { content: '1'; }
+  16.67% { content: '2'; }
+  33.33% { content: '3'; }
+  50% { content: '4'; }
+  66.67% { content: '5'; }
+  83.33% { content: '6'; }
+}
+
+/* Fallback for browsers that don't support content animation */
+.dice-roll-anim:nth-child(1) .dice-face { animation-delay: 0ms; }
+.dice-roll-anim:nth-child(2) .dice-face { animation-delay: 50ms; }
+.dice-roll-anim:nth-child(3) .dice-face { animation-delay: 100ms; }
+</style>
