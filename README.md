@@ -6,6 +6,8 @@ All data is stored locally, and it works perfectly online.
 
 Used also to test SDD Frameworks, direct human intervention is minimal
 
+Deployed on https://alien-stress-manager.vercel.app/
+
 # Technical Specs
 It's build using Vue 3 and Tailwind 4
 
@@ -19,4 +21,4 @@ It's build using Vue 3 and Tailwind 4
 
  ## [Open-Spec](https://openspec.dev/) / Claude Sonnet (4.5)
  - Thired PR (Add dice rolling) : openspec\specs
- - 
+ - Very fluid.
