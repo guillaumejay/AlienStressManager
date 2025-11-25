@@ -292,4 +292,169 @@ describe('DiceRoller', () => {
     // Should show 5 successes (3 base + 2 stress, all 6s)
     expect(wrapper.text()).toContain('5 successes')
   })
+
+  it('should show Push button when panic is NOT triggered', async () => {
+    vi.useFakeTimers()
+    // Mock random to always return 0.999 (gives 6s, no panic)
+    vi.spyOn(Math, 'random').mockReturnValue(0.999)
+
+    const wrapper = mount(DiceRoller, {
+      props: {
+        stressDice: 2,
+      },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    // Increase base dice
+    const incrementButton = wrapper.find('button[aria-label="Increase base dice"]')
+    await incrementButton.trigger('click')
+    await nextTick()
+
+    // Roll
+    const rollButton = wrapper.findAll('button').find((btn) => btn.text().includes('Roll'))
+    await rollButton?.trigger('click')
+    await nextTick()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Push button should be visible
+    const pushButton = wrapper.findAll('button').find((btn) => btn.text().includes('Push'))
+    expect(pushButton).toBeTruthy()
+    expect(pushButton?.text()).toContain('Push')
+    expect(pushButton?.text()).toContain('+1')
+  })
+
+  it('should NOT show Push button when panic is triggered', async () => {
+    vi.useFakeTimers()
+    // Mock random to always return 0 (gives 1s, panic triggered)
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    const wrapper = mount(DiceRoller, {
+      props: {
+        stressDice: 2,
+      },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    // Increase base dice
+    const incrementButton = wrapper.find('button[aria-label="Increase base dice"]')
+    await incrementButton.trigger('click')
+    await nextTick()
+
+    // Roll
+    const rollButton = wrapper.findAll('button').find((btn) => btn.text().includes('Roll'))
+    await rollButton?.trigger('click')
+    await nextTick()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Push button should NOT be visible
+    const pushButton = wrapper.findAll('button').find((btn) => btn.text().includes('Push'))
+    expect(pushButton).toBeFalsy()
+  })
+
+  it('should hide Push button after pushing once', async () => {
+    vi.useFakeTimers()
+    // Mock random to return 0.5 (gives 4s, no panic, no successes)
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+
+    const wrapper = mount(DiceRoller, {
+      props: {
+        stressDice: 2,
+      },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    // Increase base dice
+    const incrementButton = wrapper.find('button[aria-label="Increase base dice"]')
+    await incrementButton.trigger('click')
+    await nextTick()
+
+    // Roll
+    const rollButton = wrapper.findAll('button').find((btn) => btn.text().includes('Roll'))
+    await rollButton?.trigger('click')
+    await nextTick()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Push button should be visible
+    let pushButton = wrapper.findAll('button').find((btn) => btn.text().includes('Push'))
+    expect(pushButton).toBeTruthy()
+
+    // Click push button
+    await pushButton?.trigger('click')
+    await nextTick()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Push button should be gone now (can only push once)
+    pushButton = wrapper.findAll('button').find((btn) => btn.text().includes('Push'))
+    expect(pushButton).toBeFalsy()
+
+    // Should show "Pushed!" indicator
+    expect(wrapper.text()).toContain('Pushed!')
+  })
+
+  it('should emit push event with stress increase when Push button is clicked', async () => {
+    vi.useFakeTimers()
+    // Mock random to return 0.5 (gives 4s, no panic)
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+
+    const wrapper = mount(DiceRoller, {
+      props: {
+        stressDice: 2,
+      },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    // Increase base dice
+    const incrementButton = wrapper.find('button[aria-label="Increase base dice"]')
+    await incrementButton.trigger('click')
+    await nextTick()
+
+    // Roll
+    const rollButton = wrapper.findAll('button').find((btn) => btn.text().includes('Roll'))
+    await rollButton?.trigger('click')
+    await nextTick()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Click push button
+    const pushButton = wrapper.findAll('button').find((btn) => btn.text().includes('Push'))
+    await pushButton?.trigger('click')
+    await nextTick()
+
+    // Fast forward past animation
+    vi.advanceTimersByTime(1500)
+    await nextTick()
+
+    // Push event should be emitted with result and stress increase
+    expect(wrapper.emitted('push')).toBeTruthy()
+    expect(wrapper.emitted('push')?.length).toBe(1)
+
+    const emittedArgs = wrapper.emitted('push')?.[0] as [
+      { baseDiceResults: number[]; stressDiceResults: number[]; isPushed: boolean },
+      number,
+    ]
+    expect(emittedArgs[0].isPushed).toBe(true)
+    expect(emittedArgs[1]).toBe(1) // stress increase of 1
+  })
 })

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from '@/composables/useI18n'
-import { rollDice } from '@/composables/useDiceRoll'
+import { rollDice, pushRoll } from '@/composables/useDiceRoll'
 import DiceResultDisplay from '@/components/DiceResultDisplay.vue'
 import type { DiceRollResult } from '@/types'
 
@@ -13,6 +13,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   roll: [result: DiceRollResult]
+  push: [result: DiceRollResult, stressIncrease: number]
 }>()
 
 const { t } = useI18n()
@@ -20,6 +21,7 @@ const { t } = useI18n()
 const baseDice = ref(0)
 const lastResult = ref<DiceRollResult | null>(null)
 const isRolling = ref(false)
+const canPush = ref(false)
 
 function incrementBaseDice(): void {
   baseDice.value++
@@ -36,6 +38,7 @@ function handleRoll(): void {
 
   isRolling.value = true
   lastResult.value = null
+  canPush.value = false
 
   // Simulate dice rolling animation for 1.5 seconds
   setTimeout(() => {
@@ -45,7 +48,25 @@ function handleRoll(): void {
     })
     lastResult.value = result
     isRolling.value = false
+    // Can only push if no panic was triggered
+    canPush.value = !result.panicTriggered
     emit('roll', result)
+  }, 1500)
+}
+
+function handlePush(): void {
+  if (!lastResult.value || !canPush.value || isRolling.value) return
+
+  isRolling.value = true
+  const previousResult = lastResult.value
+
+  // Simulate dice rolling animation for 1.5 seconds
+  setTimeout(() => {
+    const result = pushRoll(previousResult)
+    lastResult.value = result
+    isRolling.value = false
+    canPush.value = false // Can only push once
+    emit('push', result, 1) // Signal stress increase of 1
   }, 1500)
 }
 
@@ -165,6 +186,27 @@ function formatSuccesses(count: number): string {
         <span class="text-2xl font-bold" :class="lastResult.successes > 0 ? 'text-green-400' : 'text-[var(--color-alien-text-dim)]'">
           {{ formatSuccesses(lastResult.successes) }}
         </span>
+      </div>
+
+      <!-- Push Button -->
+      <div v-if="canPush" class="mt-4 flex justify-center">
+        <button
+          type="button"
+          @click="handlePush"
+          class="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          {{ t('app.diceRoller.push') }}
+          <span class="text-sm opacity-75">(+1 {{ t('app.stress') }})</span>
+        </button>
+      </div>
+
+      <!-- Pushed Indicator -->
+      <div v-if="lastResult.isPushed" class="mt-2 text-center text-sm text-orange-400 font-semibold">
+        {{ t('app.diceRoller.pushed') }}
       </div>
     </div>
   </div>

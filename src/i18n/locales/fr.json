@@ -17,13 +17,16 @@
       "decrementLabel": "-1",
       "resetLabel": "Réinitialisation à 0",
       "panicLabel": "Panique !",
-      "diceRollLabel": "Lancer de Dés"
+      "diceRollLabel": "Lancer de Dés",
+      "pushRollLabel": "Relance"
     },
     "diceRoller": {
       "title": "Lanceur de Dés",
       "baseDice": "Dés de Base",
       "stressDice": "Dés de Stress",
       "roll": "Lancer",
+      "push": "Relancer",
+      "pushed": "Relancé !",
       "successes": "{n} succès | {n} succès",
       "noSuccesses": "Aucun succès",
       "panic": "PANIQUE !",

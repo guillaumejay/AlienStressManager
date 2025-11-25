@@ -17,13 +17,16 @@
       "decrementLabel": "-1",
       "resetLabel": "Reset to 0",
       "panicLabel": "Panic!",
-      "diceRollLabel": "Dice Roll"
+      "diceRollLabel": "Dice Roll",
+      "pushRollLabel": "Push Roll"
     },
     "diceRoller": {
       "title": "Dice Roller",
       "baseDice": "Base Dice",
       "stressDice": "Stress Dice",
       "roll": "Roll",
+      "push": "Push",
+      "pushed": "Pushed!",
       "successes": "{n} success | {n} successes",
       "noSuccesses": "No successes",
       "panic": "PANIC!",

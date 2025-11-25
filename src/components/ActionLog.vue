@@ -43,6 +43,8 @@ function getActionLabel(action: ActionLogEntry['action']): string {
       return t('app.actionLog.panicLabel')
     case 'diceRoll':
       return t('app.actionLog.diceRollLabel')
+    case 'pushRoll':
+      return t('app.actionLog.pushRollLabel')
   }
 }
 </script>
@@ -119,6 +121,7 @@ function getActionLabel(action: ActionLogEntry['action']): string {
                   'text-[var(--color-alien-danger)]': entry.action === 'reset',
                   'text-yellow-400': entry.action === 'panic',
                   'text-blue-400': entry.action === 'diceRoll',
+                  'text-orange-400': entry.action === 'pushRoll',
                 }"
               >
                 {{ getActionLabel(entry.action) }}
@@ -143,6 +146,16 @@ function getActionLabel(action: ActionLogEntry['action']): string {
             </div>
             <!-- Dice Roll Details -->
             <div v-if="entry.action === 'diceRoll' && entry.diceRollDetails" class="mt-2 pt-2 border-t border-[var(--color-alien-border)] text-xs">
+              <DiceResultDisplay
+                :base-dice-results="entry.diceRollDetails.baseDiceResults"
+                :stress-dice-results="entry.diceRollDetails.stressDiceResults"
+                :show-summary="true"
+                :successes="entry.diceRollDetails.successes"
+                :panic-triggered="entry.diceRollDetails.panicTriggered"
+              />
+            </div>
+            <!-- Push Roll Details -->
+            <div v-if="entry.action === 'pushRoll' && entry.diceRollDetails" class="mt-2 pt-2 border-t border-[var(--color-alien-border)] text-xs">
               <DiceResultDisplay
                 :base-dice-results="entry.diceRollDetails.baseDiceResults"
                 :stress-dice-results="entry.diceRollDetails.stressDiceResults"

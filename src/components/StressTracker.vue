@@ -79,6 +79,27 @@ function handleDiceRoll(result: DiceRollResult): void {
     panicRequired.value = true
   }
 }
+
+function handlePushRoll(result: DiceRollResult, stressIncrease: number): void {
+  // Increment stress first (mandatory cost for pushing)
+  for (let i = 0; i < stressIncrease; i++) {
+    incrementStress()
+  }
+
+  // Log the push action with the new stress level
+  logAction('pushRoll', character.value.stress, undefined, undefined, {
+    baseDiceResults: result.baseDiceResults,
+    stressDiceResults: result.stressDiceResults,
+    successes: result.successes,
+    panicTriggered: result.panicTriggered,
+    isPushed: true,
+  })
+
+  // Check for panic trigger on the pushed roll
+  if (result.panicTriggered) {
+    panicRequired.value = true
+  }
+}
 </script>
 
 <template>
@@ -183,6 +204,7 @@ function handleDiceRoll(result: DiceRollResult): void {
       <DiceRoller
         :stress-dice="character.stress"
         @roll="handleDiceRoll"
+        @push="handlePushRoll"
       />
 
       <!-- Panic Roll Button -->

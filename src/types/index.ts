@@ -39,6 +39,7 @@ export interface DiceRollResult {
   stressDiceResults: number[]
   successes: number
   panicTriggered: boolean
+  isPushed?: boolean
 }
 
 export interface DiceRollDetails {
@@ -46,9 +47,14 @@ export interface DiceRollDetails {
   stressDiceResults: number[]
   successes: number
   panicTriggered: boolean
+  isPushed?: boolean
+  keptDice?: {
+    baseDice: number[]
+    stressDice: number[]
+  }
 }
 
-export type ActionType = 'increment' | 'decrement' | 'reset' | 'panic' | 'diceRoll'
+export type ActionType = 'increment' | 'decrement' | 'reset' | 'panic' | 'diceRoll' | 'pushRoll'
 
 export interface PanicRollDetails {
   dieRoll: number
@@ -143,7 +149,7 @@ export function isLocale(value: string): value is Locale {
 }
 
 export function isActionType(value: string): value is ActionType {
-  return value === 'increment' || value === 'decrement' || value === 'reset' || value === 'panic' || value === 'diceRoll'
+  return value === 'increment' || value === 'decrement' || value === 'reset' || value === 'panic' || value === 'diceRoll' || value === 'pushRoll'
 }
 
 export const DEFAULT_CHARACTER: Character = {

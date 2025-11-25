@@ -56,3 +56,49 @@ export function rollDice(config: DiceRollConfig): DiceRollResult {
     panicTriggered,
   }
 }
+
+/**
+ * Push a previous roll - re-roll all non-6 dice and add one new stress die
+ *
+ * In Alien RPG, pushing allows re-rolling all dice that didn't show a 6,
+ * but costs +1 stress (which also gets rolled as an additional stress die).
+ * Panic is only checked on newly rolled stress dice (re-rolled + new stress die).
+ *
+ * @param previousResult The original roll result to push
+ * @returns New roll results combining kept 6s with re-rolled dice
+ */
+export function pushRoll(previousResult: DiceRollResult): DiceRollResult {
+  // Separate kept 6s from dice to re-roll
+  const keptBaseDice = previousResult.baseDiceResults.filter((r) => r === 6)
+  const keptStressDice = previousResult.stressDiceResults.filter((r) => r === 6)
+
+  const rerollBaseCount = previousResult.baseDiceResults.filter((r) => r !== 6).length
+  const rerollStressCount = previousResult.stressDiceResults.filter((r) => r !== 6).length
+
+  // Re-roll non-6s
+  const rerolledBaseDice = rollMultipleD6(rerollBaseCount)
+  const rerolledStressDice = rollMultipleD6(rerollStressCount)
+
+  // Roll the new stress die from +1 stress
+  const newStressDie = rollMultipleD6(1)
+
+  // Combine results
+  const baseDiceResults = [...keptBaseDice, ...rerolledBaseDice]
+  const stressDiceResults = [...keptStressDice, ...rerolledStressDice, ...newStressDie]
+
+  const allResults = [...baseDiceResults, ...stressDiceResults]
+  const successes = countSuccesses(allResults)
+
+  // Check panic only on newly rolled stress dice (re-rolled + new stress die)
+  // Kept 6s cannot trigger panic since they weren't rolled
+  const panicCheckDice = [...rerolledStressDice, ...newStressDie]
+  const panicTriggered = checkPanic(panicCheckDice)
+
+  return {
+    baseDiceResults,
+    stressDiceResults,
+    successes,
+    panicTriggered,
+    isPushed: true,
+  }
+}

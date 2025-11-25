@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { rollDice } from '@/composables/useDiceRoll'
+import { rollDice, pushRoll } from '@/composables/useDiceRoll'
 
 describe('useDiceRoll', () => {
   describe('rollDice', () => {
@@ -109,6 +109,213 @@ describe('useDiceRoll', () => {
       const result = rollDice({ baseDice: 1, stressDice: 1 })
 
       expect(result.successes).toBe(2)
+    })
+  })
+
+  describe('pushRoll', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('should keep all 6s from original roll', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original result: base dice [6, 4, 6], stress dice [6, 3]
+      // After push: kept base [6, 6], kept stress [6]
+      // Re-rolled: 1 base die, 1 stress die, plus 1 new stress die
+      // Mock returns for re-rolled dice: [5] for base, [4, 2] for stress (re-rolled + new)
+      mockRandom
+        .mockReturnValueOnce(0.666) // re-rolled base -> 5
+        .mockReturnValueOnce(0.5)   // re-rolled stress -> 4
+        .mockReturnValueOnce(0.166) // new stress die -> 2
+
+      const previousResult = {
+        baseDiceResults: [6, 4, 6],
+        stressDiceResults: [6, 3],
+        successes: 3,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      // Should have kept 6s: base has [6, 6] + new [5], stress has [6] + new [4, 2]
+      expect(result.baseDiceResults).toContain(6)
+      expect(result.baseDiceResults.filter((d) => d === 6).length).toBe(2)
+      expect(result.stressDiceResults).toContain(6)
+      expect(result.stressDiceResults.filter((d) => d === 6).length).toBe(1)
+    })
+
+    it('should re-roll correct number of non-6 dice', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original: base [6, 3, 2], stress [5, 4] - 2 base to re-roll, 2 stress to re-roll
+      // Plus 1 new stress die = 5 total dice to roll
+      mockRandom
+        .mockReturnValueOnce(0.5)   // re-rolled base #1
+        .mockReturnValueOnce(0.5)   // re-rolled base #2
+        .mockReturnValueOnce(0.5)   // re-rolled stress #1
+        .mockReturnValueOnce(0.5)   // re-rolled stress #2
+        .mockReturnValueOnce(0.5)   // new stress die
+
+      const previousResult = {
+        baseDiceResults: [6, 3, 2],
+        stressDiceResults: [5, 4],
+        successes: 1,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      // Base: 1 kept (6) + 2 re-rolled = 3
+      // Stress: 0 kept + 2 re-rolled + 1 new = 3
+      expect(result.baseDiceResults).toHaveLength(3)
+      expect(result.stressDiceResults).toHaveLength(3)
+    })
+
+    it('should add exactly 1 new stress die for push cost', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original: base [6], stress [6] - all 6s, nothing to re-roll except new stress die
+      mockRandom.mockReturnValueOnce(0.5) // new stress die -> 4
+
+      const previousResult = {
+        baseDiceResults: [6],
+        stressDiceResults: [6],
+        successes: 2,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      // Base: 1 kept, Stress: 1 kept + 1 new = 2
+      expect(result.baseDiceResults).toHaveLength(1)
+      expect(result.stressDiceResults).toHaveLength(2)
+    })
+
+    it('should only check newly rolled stress dice for panic (kept 6s are safe)', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original: base [6], stress [6, 3] - stress 6 is kept, 3 is re-rolled
+      // Re-roll the 3, plus add new stress die
+      // Neither re-rolled nor new die shows 1
+      mockRandom
+        .mockReturnValueOnce(0.5)   // re-rolled stress -> 4
+        .mockReturnValueOnce(0.5)   // new stress die -> 4
+
+      const previousResult = {
+        baseDiceResults: [6],
+        stressDiceResults: [6, 3],
+        successes: 2,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      // No panic because neither new dice shows 1
+      expect(result.panicTriggered).toBe(false)
+    })
+
+    it('should trigger panic when re-rolled stress die shows 1', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original: base [6], stress [6, 3]
+      // Re-roll the 3 -> 1 (panic!)
+      mockRandom
+        .mockReturnValueOnce(0)     // re-rolled stress -> 1 (panic!)
+        .mockReturnValueOnce(0.5)   // new stress die -> 4
+
+      const previousResult = {
+        baseDiceResults: [6],
+        stressDiceResults: [6, 3],
+        successes: 2,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      expect(result.panicTriggered).toBe(true)
+    })
+
+    it('should trigger panic when new stress die shows 1', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original: base [6], stress [6] - all 6s kept
+      // New stress die shows 1 (panic!)
+      mockRandom.mockReturnValueOnce(0) // new stress die -> 1 (panic!)
+
+      const previousResult = {
+        baseDiceResults: [6],
+        stressDiceResults: [6],
+        successes: 2,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      expect(result.panicTriggered).toBe(true)
+    })
+
+    it('should set isPushed flag to true', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+      mockRandom.mockReturnValue(0.5)
+
+      const previousResult = {
+        baseDiceResults: [3],
+        stressDiceResults: [4],
+        successes: 0,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      expect(result.isPushed).toBe(true)
+    })
+
+    it('should calculate total successes correctly including kept dice', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original: base [6, 3], stress [6, 4] - 2 successes (kept)
+      // Re-roll 3 and 4, plus new stress die
+      // All re-rolls become 6s
+      mockRandom
+        .mockReturnValueOnce(0.999) // re-rolled base -> 6
+        .mockReturnValueOnce(0.999) // re-rolled stress -> 6
+        .mockReturnValueOnce(0.999) // new stress die -> 6
+
+      const previousResult = {
+        baseDiceResults: [6, 3],
+        stressDiceResults: [6, 4],
+        successes: 2,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      // 2 kept 6s + 3 new 6s = 5 successes
+      expect(result.successes).toBe(5)
+    })
+
+    it('should handle push when original had no stress dice', () => {
+      const mockRandom = vi.spyOn(Math, 'random')
+
+      // Original: base [3, 4], stress [] - no stress dice
+      // Re-roll both base dice, add 1 new stress die
+      mockRandom
+        .mockReturnValueOnce(0.5)   // re-rolled base #1 -> 4
+        .mockReturnValueOnce(0.5)   // re-rolled base #2 -> 4
+        .mockReturnValueOnce(0.5)   // new stress die -> 4
+
+      const previousResult = {
+        baseDiceResults: [3, 4],
+        stressDiceResults: [],
+        successes: 0,
+        panicTriggered: false,
+      }
+
+      const result = pushRoll(previousResult)
+
+      expect(result.baseDiceResults).toHaveLength(2)
+      expect(result.stressDiceResults).toHaveLength(1) // Just the new stress die
     })
   })
 })
