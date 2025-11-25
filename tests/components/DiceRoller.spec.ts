@@ -120,7 +120,11 @@ describe('DiceRoller', () => {
     vi.advanceTimersByTime(1500)
     await nextTick()
 
-    // Should show panic indicator (but NOT panic roll button - that's handled by StressTracker now)
+    // Panel should have panic styling (red background/border)
+    const panel = wrapper.find('div')
+    expect(panel.classes()).toContain('bg-red-950')
+    expect(panel.classes()).toContain('border-red-700')
+    // Should also show PANIC! text
     expect(wrapper.text()).toContain('PANIC!')
   })
 
@@ -152,7 +156,11 @@ describe('DiceRoller', () => {
     vi.advanceTimersByTime(1500)
     await nextTick()
 
-    // Should NOT show panic indicator
+    // Panel should NOT have panic styling
+    const panel = wrapper.find('div')
+    expect(panel.classes()).not.toContain('bg-red-950')
+    expect(panel.classes()).not.toContain('border-red-700')
+    // Should NOT show PANIC! text
     expect(wrapper.text()).not.toContain('PANIC!')
   })
 

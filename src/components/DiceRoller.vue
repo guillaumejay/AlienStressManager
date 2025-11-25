@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from '@/composables/useI18n'
 import { rollDice } from '@/composables/useDiceRoll'
+import DiceResultDisplay from '@/components/DiceResultDisplay.vue'
 import type { DiceRollResult } from '@/types'
 
 interface Props {
@@ -57,7 +58,12 @@ function formatSuccesses(count: number): string {
 </script>
 
 <template>
-  <div class="p-4 bg-[var(--color-alien-bg-secondary)] border border-[var(--color-alien-border)] rounded">
+  <div
+    class="p-4 rounded transition-colors"
+    :class="lastResult?.panicTriggered && !isRolling
+      ? 'bg-red-950 border-2 border-red-700'
+      : 'bg-[var(--color-alien-bg-secondary)] border border-[var(--color-alien-border)]'"
+  >
     <h3 class="text-lg font-semibold text-[var(--color-alien-text)] mb-4">
       {{ t('app.diceRoller.title') }}
     </h3>
@@ -145,20 +151,20 @@ function formatSuccesses(count: number): string {
 
     <!-- Results Display -->
     <div v-if="lastResult && !isRolling" class="mt-4 p-4 bg-[var(--color-alien-bg-tertiary)] border border-[var(--color-alien-border)] rounded">
+      <!-- Dice Rolled -->
+      <div class="flex justify-center mb-3">
+        <DiceResultDisplay
+          :base-dice-results="lastResult.baseDiceResults"
+          :stress-dice-results="lastResult.stressDiceResults"
+          :panic-triggered="lastResult.panicTriggered"
+        />
+      </div>
+
       <!-- Successes -->
-      <div class="text-center mb-2">
+      <div class="text-center">
         <span class="text-2xl font-bold" :class="lastResult.successes > 0 ? 'text-green-400' : 'text-[var(--color-alien-text-dim)]'">
           {{ formatSuccesses(lastResult.successes) }}
         </span>
-      </div>
-
-      <!-- Panic Indicator -->
-      <div v-if="lastResult.panicTriggered" class="text-center">
-        <div class="inline-block px-4 py-2 bg-red-900 border border-red-600 rounded animate-pulse">
-          <span class="text-xl font-bold text-red-400">
-            {{ t('app.diceRoller.panic') }}
-          </span>
-        </div>
       </div>
     </div>
   </div>
