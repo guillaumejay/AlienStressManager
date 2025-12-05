@@ -38,7 +38,8 @@
       "fr": "Français"
     },
     "panic": {
-      "nerveOfSteel": "Nerfs d'acier (-2 aux jets de panique)",
+      "nerveOfSteel": "Nerfs d'acier",
+      "nerveOfSteelInfo": "-2 aux jets de panique",
       "roll": "Jet de Panique",
       "actionLoss": "Vous perdez votre prochaine action.",
       "actionLossSlow": "Vous perdez votre prochaine action lente.",

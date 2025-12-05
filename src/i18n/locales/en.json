@@ -38,7 +38,8 @@
       "fr": "French"
     },
     "panic": {
-      "nerveOfSteel": "Nerve of Steel (-2 to panic rolls)",
+      "nerveOfSteel": "Nerve of Steel",
+      "nerveOfSteelInfo": "-2 to panic rolls",
       "roll": "Panic Roll",
       "actionLoss": "You lose your next action.",
       "actionLossSlow": "You lose your next slow action.",
