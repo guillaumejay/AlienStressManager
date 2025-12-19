@@ -29,5 +29,5 @@ It's build using Vue 3 and Tailwind 4
 
 ## Claude Code Plan Mode / (Claude Opus 4.5)
 
-- Pushing rolls : claude_code_planning/claude_code_planning
+- Pushing rolls : claude_code_planning/push-roll-feature.md
 - Did its job
